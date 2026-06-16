@@ -1,141 +1,121 @@
 /**
- * URL to Markdown Converter
- * Uses Puppeteer (headless Chrome) + Turndown for HTML to Markdown conversion
+ * URL to Markdown Converter (Enhanced)
+ *
+ * Orchestrates HTTP fallback → browser loading → content extraction.
+ * Preserves the original public API: urlToMd(), urlToJson(), batchConvert().
  */
 
-const puppeteer = require('puppeteer');
-const TurndownService = require('turndown');
+const { detectStrategy, mergeStrategy } = require('./strategies');
+const { loadPageWithRetry } = require('./loader');
+const { extractContent } = require('./extractor');
+const { tryHttpFallback, httpExtractContent } = require('./http-fallback');
+const { ERRORS } = require('./errors');
 
 async function urlToMd(url, options = {}) {
   const opts = {
     headless: true,
-    viewport: 'desktop',
     timeout: 30,
     clean: false,
     noImages: false,
     noLinks: false,
-    ...options
+    blockResources: true,
+    ...options,
   };
-  
+
   if (!url || typeof url !== 'string') {
-    throw new Error('Invalid URL provided');
+    throw ERRORS.parseError('Invalid URL provided', { url });
   }
-  
+
   let normalizedUrl = url;
   if (!url.startsWith('http://') && !url.startsWith('https://')) {
     normalizedUrl = 'https://' + url;
   }
-  
-  const viewports = {
-    mobile: { width: 375, height: 667 },
-    tablet: { width: 768, height: 1024 },
-    desktop: { width: 1920, height: 1080 }
-  };
-  
-  const vp = viewports[opts.viewport] || viewports.desktop;
-  
-  const browser = await puppeteer.launch({
-    headless: true,
-    args: ['--no-sandbox', '--disable-setuid-sandbox']
-  });
-  
-  const page = await browser.newPage();
-  
-  await page.setViewport({
-    width: vp.width,
-    height: vp.height,
-    isMobile: opts.viewport === 'mobile',
-    hasTouch: opts.viewport !== 'desktop'
-  });
-  
-  await page.setUserAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36');
-  
-  await page.goto(normalizedUrl, {
-    waitUntil: 'domcontentloaded',
-    timeout: opts.timeout * 1000
-  });
-  
-  // Small wait for JS content
-  await new Promise(r => setTimeout(r, 2000));
-  
-  const title = await page.title();
-  const html = await page.evaluate(() => document.documentElement.outerHTML);
-  
-  await browser.close();
-  
-  const turndownService = new TurndownService({
-    headingStyle: 'atx',
-    codeBlockStyle: 'fenced',
-    bulletListMarker: '-',
-    emDelimiter: '*',
-    strongDelimiter: '**',
-    linkStyle: 'inlined'
-  });
-  
-  if (opts.noImages) {
-    turndownService.addRule('removeImages', {
-      filter: ['img', 'picture', 'figure'],
-      replacement: () => ''
-    });
+
+  // Detect and merge strategy
+  const detected = detectStrategy(normalizedUrl);
+  const strategy = mergeStrategy(opts, detected);
+
+  // Layer 1: Try HTTP fallback first for static pages
+  try {
+    const httpResult = await tryHttpFallback(normalizedUrl, opts);
+    if (httpResult) {
+      return httpExtractContent(
+        httpResult.html,
+        httpResult.title,
+        normalizedUrl,
+        opts,
+        strategy
+      );
+    }
+  } catch {
+    // HTTP fallback failed; proceed to Puppeteer
   }
-  
-  if (opts.noLinks) {
-    turndownService.addRule('removeLinks', {
-      filter: 'a',
-      replacement: (content) => content
-    });
-  }
-  
-  let markdown = turndownService.turndown(html);
-  markdown = markdown.replace(/\n{4,}/g, '\n\n').trim();
-  
-  const wordCount = markdown.split(/\s+/).filter(w => w.length > 0).length;
-  
-  return {
-    url: normalizedUrl,
-    title,
-    markdown,
-    content: markdown,
-    wordCount,
-    charCount: markdown.length,
-    provider: 'puppeteer-turndown',
-    viewport: vp
-  };
+
+  // Layer 2: Load page via Puppeteer with retry (handles --clean inline)
+  const { html, title } = await loadPageWithRetry(normalizedUrl, strategy, opts);
+
+  // Layer 3: Extract content → markdown
+  const result = await extractContent(html, title, normalizedUrl, strategy, opts);
+
+  return result;
 }
 
 async function urlToJson(url, options = {}) {
-  const result = await urlToMd(url, options);
-  
-  return {
-    url: result.url,
-    title: result.title,
-    markdown: result.markdown,
-    wordCount: result.wordCount,
-    charCount: result.charCount,
-    timestamp: new Date().toISOString(),
-    provider: result.provider,
-    viewport: result.viewport
-  };
+  try {
+    const result = await urlToMd(url, options);
+
+    return {
+      url: result.url,
+      title: result.title,
+      markdown: result.markdown,
+      wordCount: result.wordCount,
+      charCount: result.charCount,
+      timestamp: new Date().toISOString(),
+      provider: result.provider,
+      viewport: result.viewport,
+      siteType: result.siteType,
+      error: null,
+    };
+  } catch (error) {
+    return {
+      url,
+      title: null,
+      markdown: null,
+      wordCount: 0,
+      charCount: 0,
+      timestamp: new Date().toISOString(),
+      provider: 'puppeteer-turndown-enhanced',
+      siteType: null,
+      error: {
+        message: error.message || String(error),
+        category: error.category || 'unknown',
+        details: error.details || {},
+      },
+    };
+  }
 }
 
 async function batchConvert(urls, options = {}) {
   const concurrency = 3;
   const results = [];
-  
+
   for (let i = 0; i < urls.length; i += concurrency) {
     const batch = urls.slice(i, i + concurrency);
     const batchResults = await Promise.allSettled(
-      batch.map(url => urlToMd(url, options))
+      batch.map((url) => urlToMd(url, options))
     );
-    
-    results.push(...batchResults.map((result, index) => ({
-      url: batch[index],
-      success: result.status === 'fulfilled',
-      data: result.status === 'fulfilled' ? result.value : null,
-      error: result.status === 'rejected' ? result.reason.message : null
-    })));
+
+    results.push(
+      ...batchResults.map((result, index) => ({
+        url: batch[index],
+        success: result.status === 'fulfilled',
+        data: result.status === 'fulfilled' ? result.value : null,
+        error: result.status === 'rejected' ? result.reason.message || String(result.reason) : null,
+        errorCategory: result.status === 'rejected' ? result.reason.category || null : null,
+      }))
+    );
   }
-  
+
   return results;
 }
 

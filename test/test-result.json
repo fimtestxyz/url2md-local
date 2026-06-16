@@ -1,0 +1,415 @@
+{
+  "timestamp": "2026-06-16T10:18:30.683Z",
+  "durationSec": 59.1,
+  "passed": 81,
+  "failed": 0,
+  "skipped": 0,
+  "total": 81,
+  "results": [
+    {
+      "label": "✓ Url2mdError extends Error",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ Url2mdError sets category and details",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ ERRORS.timeout factory",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ ERRORS.blocked factory",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ ERRORS.paywall factory",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ ERRORS.notFound factory",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ ERRORS.parseError factory",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ ERRORS.contentQuality factory",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ ERRORS.browser factory",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ ERRORS factories default details to empty object",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ PREMIUM_NEWS has 12 entries",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ detectStrategy returns default for null",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ detectStrategy returns default for empty string",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ detectStrategy returns default for invalid URL",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ detectStrategy matches exact domain (bloomberg)",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ detectStrategy matches exact domain (reuters)",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ detectStrategy matches exact domain (nytimes)",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ detectStrategy matches exact domain (wsj)",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ detectStrategy matches exact domain (cnbc)",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ detectStrategy matches exact domain (theguardian)",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ detectStrategy matches exact domain (apnews)",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ detectStrategy matches www-prefixed domain",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ detectStrategy does case-insensitive matching",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ detectStrategy heuristic: bbc → news",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ detectStrategy heuristic: medium → blog",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ detectStrategy heuristic: docs.example → docs",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ detectStrategy heuristic: api.example → docs",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ detectStrategy heuristic: unknown → generic",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ DEFAULT_STRATEGY has expected fields",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ mergeStrategy passes through detected values",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ mergeStrategy overrides with user opts",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ mergeStrategy respects --wait override",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ mergeStrategy preserves blockResources default",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ mergeStrategy respects blockResources: false",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ mergeStrategy respects blockResources: true",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ mergeStrategy string viewport → object viewport",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ mergeStrategy object viewport",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ mergeStrategy respects strategy override",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ bloomberg has paywall selectors",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ reuters has paywall selectors",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ cnbc has no paywall selectors",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ createTurndown returns a TurndownService instance",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ createTurndown respects noImages option",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ createTurndown respects noLinks option",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ extractContent converts HTML to markdown",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ extractContent returns correct shape",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ extractContent throws contentQuality error when word count below threshold",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ extractContent respects qualityThresholdWords from strategy",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ extractContent normalizes excessive newlines",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ extractContent preserves heading style (ATX)",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ package.json has test script",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ bin/url2md.js exists",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ all source files exist",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ test.cjs exists",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ tryHttpFallback returns null for nonexistent domain",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ tryHttpFallback succeeds for AP News article",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ tryHttpFallback returns null for tiny page (example.com)",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ httpExtractContent produces correct shape",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ urlToMd throws parseError for null URL",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ urlToMd throws parseError for empty string",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ urlToMd auto-prefixes https://",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ urlToMd returns correct shape on success (AP News via HTTP fallback)",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ urlToMd with --no-images works",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ urlToMd with --no-links works",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ urlToMd with custom qualityThreshold on tiny page",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ urlToMd with viewport mobile",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ urlToMd with --block-resources false",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ urlToJson returns success shape with error: null",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ urlToJson returns error shape on failure",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ urlToJson includes timestamp",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ batchConvert processes single URL",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ batchConvert reports errorCategory for failed URLs",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ batchConvert handles mixed success/failure",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ loadPageWithRetry succeeds for AP News article",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ loadPageWithRetry categorizes DNS failure as blocked",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ loadPageWithRetry works with resource blocking enabled",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ loadPageWithRetry works with resource blocking disabled",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ urlToMd return shape matches original contract",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ urlToJson return shape matches original contract",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ batchConvert return shape matches original contract",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ viewport in return is {width, height}",
+      "status": "PASS",
+      "error": null
+    }
+  ]
+}
