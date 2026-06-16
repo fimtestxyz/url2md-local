@@ -1,0 +1,33 @@
+{
+  "name": "url2md-local",
+  "version": "1.0.0",
+  "description": "Convert URLs to markdown using local Puppeteer + Turndown (no external APIs)",
+  "main": "src/index.js",
+  "bin": {
+    "url2md-local": "bin/url2md.js"
+  },
+  "scripts": {
+    "start": "node bin/url2md.js",
+    "test": "node test/test.js"
+  },
+  "keywords": [
+    "markdown",
+    "cli",
+    "puppeteer",
+    "turndown",
+    "web-scraping"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.6.0",
+    "cheerio": "^1.0.0-rc.12",
+    "commander": "^11.1.0",
+    "dotenv": "^16.3.1",
+    "puppeteer": "^21.6.0",
+    "turndown": "^7.1.2"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}
