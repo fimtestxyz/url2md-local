@@ -1,0 +1,10 @@
+node_modules
+.git
+.gitignore
+sample*.md
+test/
+url2md.sh
+*.log
+.DS_Store
+.qoder
+.claude

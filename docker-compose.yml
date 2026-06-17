@@ -1,0 +1,14 @@
+services:
+  url2md:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      POOL_SIZE: 3
+      PORT: 3000
+      REQUEST_TIMEOUT: 60
+    deploy:
+      resources:
+        limits:
+          memory: 2g
+    restart: unless-stopped

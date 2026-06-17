@@ -84,7 +84,8 @@ async function loadPage(url, strategy, opts = {}) {
 async function loadPageWithRetry(url, strategy, opts = {}) {
   const maxRetries = strategy.retries || 1;
   const backoffMs = strategy.retryBackoffMs || 1000;
-  const browser = await puppeteer.launch({
+  const ownsBrowser = !opts.browser;
+  const browser = opts.browser || await puppeteer.launch({
     headless: opts.headless !== false,
     executablePath: resolveChromePath(),
     args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-gpu'],
@@ -163,7 +164,7 @@ async function loadPageWithRetry(url, strategy, opts = {}) {
 
     const title = await page.title();
 
-      await browser.close();
+      if (ownsBrowser) await browser.close();
       return { html, title };
     } catch (err) {
       lastError = err;
@@ -172,7 +173,7 @@ async function loadPageWithRetry(url, strategy, opts = {}) {
       const categorized = categorizeError(err, url);
       const nonTransient = ['paywall', 'not-found', 'blocked'].includes(categorized.category);
       if (nonTransient) {
-        await browser.close().catch(() => {});
+        if (ownsBrowser) await browser.close().catch(() => {});
         throw categorized;
       }
 
@@ -186,7 +187,7 @@ async function loadPageWithRetry(url, strategy, opts = {}) {
     }
   }
 
-  await browser.close().catch(() => {});
+  if (ownsBrowser) await browser.close().catch(() => {});
   throw categorizeError(lastError, url);
 }
 
@@ -269,4 +270,4 @@ function categorizeError(err, url) {
   return ERRORS.browser(`Browser error for ${url}: ${msg}`, { url, originalError: msg });
 }
 
-module.exports = { loadPage, loadPageWithRetry };
+module.exports = { loadPage, loadPageWithRetry, resolveChromePath };
