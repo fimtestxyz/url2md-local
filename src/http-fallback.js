@@ -46,33 +46,41 @@ async function tryHttpFallback(url, opts = {}) {
 
     const $ = cheerio.load(html);
 
-    // Remove scripts, styles, nav, footer, aside, ads
-    $('script, style, nav, footer, aside, noscript, iframe, .ad, .ads, .advertisement, .banner, .cookie, .modal, .popup, .sidebar, .navigation, [class*="ad"], [class*="banner"], [class*="cookie"]').remove();
-
     const title = $('title').text().trim() || $('h1').first().text().trim() || '';
 
-    // Extract main content — try common article selectors
-    const contentEl =
-      $('article').first() ||
-      $('[class*="article-body"]').first() ||
-      $('[class*="post-content"]').first() ||
-      $('[class*="story-body"]').first() ||
-      $('.entry-content').first() ||
-      $('.post-content').first() ||
-      $('main').first() ||
-      $('#content').first() ||
-      $('.content').first();
+    // Extract main content BEFORE aggressive cleanup so we don't lose it
+    const selectorCandidates = [
+      'article', '[class*="article-body"]', '[class*="post-content"]',
+      '[class*="story-body"]', '.entry-content', '.post-content',
+      'main', '#content', '.content',
+    ];
+    let bodyHtml = null;
+    for (const sel of selectorCandidates) {
+      const el = $(sel).first();
+      if (el.length > 0) {
+        const inner = el.html();
+        if (inner && typeof inner === 'string') {
+          bodyHtml = inner;
+          break;
+        }
+      }
+    }
+    if (!bodyHtml) {
+      bodyHtml = $('body').html();
+    }
+    if (!bodyHtml || typeof bodyHtml !== 'string') return null;
 
-    const bodyHtml = contentEl ? contentEl.html() || $('body').html() : $('body').html();
+    // Clean the extracted HTML in a fresh document
+    const $clean = cheerio.load(`<html><body>${bodyHtml}</body></html>`);
+    $clean('script, style, noscript, iframe, .ad, .ads, .advertisement, .cookie, .modal, .popup, .sidebar, .navigation').remove();
 
-    // Count words in the body
-    const tempText = cheerio.load(bodyHtml)('body').text();
-    const wordCount = tempText.split(/\s+/).filter((w) => w.length > 0).length;
+    const cleanBodyText = $clean('body').text();
+    const wordCount = cleanBodyText.split(/\s+/).filter((w) => w.length > 0).length;
 
     // Need minimum content to be worth the HTTP call
     if (wordCount < 50) return null;
 
-    return { html: bodyHtml, title, wordCount };
+    return { html: $clean('body').html(), title, wordCount };
   } catch (err) {
     // Network error, DNS failure, timeout — fall back to Puppeteer
     return null;

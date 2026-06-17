@@ -1,10 +1,10 @@
 {
-  "timestamp": "2026-06-16T10:18:30.683Z",
-  "durationSec": 59.1,
-  "passed": 81,
+  "timestamp": "2026-06-17T00:14:46.798Z",
+  "durationSec": 58.1,
+  "passed": 85,
   "failed": 0,
   "skipped": 0,
-  "total": 81,
+  "total": 85,
   "results": [
     {
       "label": "✓ Url2mdError extends Error",
@@ -293,6 +293,26 @@
     },
     {
       "label": "✓ httpExtractContent produces correct shape",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ stripDataImages removes data URIs but keeps alt text",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ stripDataImages drops altless data-URI images entirely",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ stripDataImages leaves remote and relative image URLs untouched",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "label": "✓ stripDataImages handles empty/null input safely",
       "status": "PASS",
       "error": null
     },

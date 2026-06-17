@@ -2,8 +2,25 @@
  * Page loader — robust loading with resource blocking, smart wait, and retry.
  */
 
+const fs = require('fs');
 const puppeteer = require('puppeteer');
 const { ERRORS } = require('./errors');
+
+const SYSTEM_CHROME_PATHS = [
+  '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+  '/usr/bin/google-chrome',
+  '/usr/bin/google-chrome-stable',
+];
+
+function resolveChromePath() {
+  const envPath = process.env.PUPPETEER_EXECUTABLE_PATH || process.env.CHROME_PATH;
+  if (envPath && fs.existsSync(envPath)) return envPath;
+
+  for (const p of SYSTEM_CHROME_PATHS) {
+    if (fs.existsSync(p)) return p;
+  }
+  return undefined;
+}
 
 /**
  * Load a single page, returning raw HTML and title.
@@ -15,6 +32,7 @@ const { ERRORS } = require('./errors');
 async function loadPage(url, strategy, opts = {}) {
   const browser = await puppeteer.launch({
     headless: opts.headless !== false,
+    executablePath: resolveChromePath(),
     args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-gpu'],
   });
 
@@ -68,6 +86,7 @@ async function loadPageWithRetry(url, strategy, opts = {}) {
   const backoffMs = strategy.retryBackoffMs || 1000;
   const browser = await puppeteer.launch({
     headless: opts.headless !== false,
+    executablePath: resolveChromePath(),
     args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-gpu'],
   });
 

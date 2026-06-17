@@ -32,12 +32,14 @@ async function main() {
 
   // Global options
   program
-    .option('--headless', 'Run browser in headless mode', true)
+    .option('--headless', 'Run browser in headless mode (default)', true)
+    .option('--no-headless', 'Run browser in visible (non-headless) mode')
     .option('--wait <seconds>', 'Wait time for page load', '2')
     .option('--viewport <type>', 'Viewport: mobile, tablet, desktop', 'desktop')
     .option('--timeout <seconds>', 'Request timeout', '30')
     .option('--clean', 'Remove nav, footer, scripts, ads', false)
     .option('--no-images', 'Remove images from output', false)
+    .option('--no-data-images', 'Strip data URIs from images (default: keep)', true)
     .option('--no-links', 'Remove links from output', false)
     .option('--strategy <name>', 'Override auto-detected strategy name')
     .option('--retries <n>', 'Number of retry attempts', '1')

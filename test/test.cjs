@@ -493,7 +493,39 @@ async function runAsyncTests(unitOnly) {
   // ---- 6. Converter Pipeline (async, needs browser) ----
   group('6. Converter Pipeline (src/converter.js)');
   {
-    const { urlToMd, urlToJson, batchConvert } = require('../src/converter');
+    const { urlToMd, urlToJson, batchConvert, stripDataImages } = require('../src/converter');
+
+    test('stripDataImages removes data URIs but keeps alt text', () => {
+      const md = 'Before\n![play](data:image/png;base64,iVBORw0KGgo=)\nAfter';
+      const out = stripDataImages(md);
+      assert.ok(!out.includes('data:image/png;base64'), 'base64 payload removed');
+      assert.ok(out.includes('![play]()'), 'alt text preserved as empty-src image');
+      assert.ok(out.includes('Before'));
+      assert.ok(out.includes('After'));
+    });
+
+    test('stripDataImages drops altless data-URI images entirely', () => {
+      const md = 'X\n![](data:image/png;base64,AAAA)\nY';
+      const out = stripDataImages(md);
+      assert.ok(!out.includes('data:'));
+      assert.ok(!out.includes('![]'));
+      assert.ok(out.includes('X'));
+      assert.ok(out.includes('Y'));
+    });
+
+    test('stripDataImages leaves remote and relative image URLs untouched', () => {
+      const md = '![](https://example.com/a.png) ![](/local/b.png) ![](data:image/gif;base64,AAAA)';
+      const out = stripDataImages(md);
+      assert.ok(out.includes('https://example.com/a.png'));
+      assert.ok(out.includes('/local/b.png'));
+      assert.ok(!out.includes('data:'));
+    });
+
+    test('stripDataImages handles empty/null input safely', () => {
+      assert.strictEqual(stripDataImages(''), '');
+      assert.strictEqual(stripDataImages(null), null);
+      assert.strictEqual(stripDataImages(undefined), undefined);
+    });
 
     await asyncTest('urlToMd throws parseError for null URL', async () => {
       try {

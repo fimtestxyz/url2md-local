@@ -11,6 +11,24 @@ const { extractContent } = require('./extractor');
 const { tryHttpFallback, httpExtractContent } = require('./http-fallback');
 const { ERRORS } = require('./errors');
 
+/**
+ * Strip base64 data URIs from image tags.
+ *
+ * `![alt](data:image/png;base64,...)` → `![alt]()` when alt text is present,
+ * otherwise the whole image is dropped. HTTP URLs and relative paths are left
+ * untouched. Exported so it can be unit-tested directly.
+ *
+ * @param {string} markdown
+ * @returns {string}
+ */
+function stripDataImages(markdown) {
+  if (!markdown) return markdown;
+  return markdown.replace(
+    /!\[([^\]]*)\]\(data:[^)]+\)/g,
+    (match, alt) => (alt ? `![${alt}]()` : '')
+  );
+}
+
 async function urlToMd(url, options = {}) {
   const opts = {
     headless: true,
@@ -18,9 +36,14 @@ async function urlToMd(url, options = {}) {
     clean: false,
     noImages: false,
     noLinks: false,
+    dataImages: true,
     blockResources: true,
     ...options,
   };
+
+  // Explicit false (e.g. from Commander's --no-data-images) should win, but an
+  // undefined value must not clobber the default above.
+  if (opts.dataImages === undefined) opts.dataImages = true;
 
   if (!url || typeof url !== 'string') {
     throw ERRORS.parseError('Invalid URL provided', { url });
@@ -39,13 +62,22 @@ async function urlToMd(url, options = {}) {
   try {
     const httpResult = await tryHttpFallback(normalizedUrl, opts);
     if (httpResult) {
-      return httpExtractContent(
+      const result = httpExtractContent(
         httpResult.html,
         httpResult.title,
         normalizedUrl,
         opts,
         strategy
       );
+
+      // Strip base64 data URIs from images (e.g. ![x](data:image/png;base64,...)).
+      // Apply to both .markdown and .content — the CLI writes .content.
+      if (!opts.dataImages) {
+        result.markdown = stripDataImages(result.markdown);
+        result.content = result.markdown;
+      }
+
+      return result;
     }
   } catch {
     // HTTP fallback failed; proceed to Puppeteer
@@ -56,6 +88,13 @@ async function urlToMd(url, options = {}) {
 
   // Layer 3: Extract content → markdown
   const result = await extractContent(html, title, normalizedUrl, strategy, opts);
+
+  // Strip base64 data URIs from images (e.g. ![x](data:image/png;base64,...)).
+  // Apply to both .markdown and .content — the CLI writes .content.
+  if (!opts.dataImages) {
+    result.markdown = stripDataImages(result.markdown);
+    result.content = result.markdown;
+  }
 
   return result;
 }
@@ -119,4 +158,4 @@ async function batchConvert(urls, options = {}) {
   return results;
 }
 
-module.exports = { urlToMd, urlToJson, batchConvert };
+module.exports = { urlToMd, urlToJson, batchConvert, stripDataImages };
