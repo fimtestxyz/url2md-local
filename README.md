@@ -36,52 +36,52 @@ npm install -g .
 
 ```bash
 # Convert URL to markdown
-url2md-local convert https://example.com
+./url2md.sh convert https://example.com
 
 # Save to file
-url2md-local convert https://example.com -o output.md
+./url2md.sh convert https://example.com -o output.md
 
 # JSON output
-url2md-local convert https://example.com --json
+./url2md.sh convert https://example.com --json
 ```
 
 ### Content Options
 
 ```bash
 # Remove images
-url2md-local convert https://example.com --no-images
+./url2md.sh convert https://example.com --no-images
 
 # Remove links
-url2md-local convert https://example.com --no-links
+./url2md.sh convert https://example.com --no-links
 
 # Clean content (remove nav, footer, ads)
-url2md-local convert https://example.com --clean
+./url2md.sh convert https://example.com --clean
 
 # All options combined
-url2md-local convert https://example.com --clean --no-images --no-links -o clean.md
+./url2md.sh convert https://example.com --clean --no-images --no-links -o clean.md
 ```
 
 ### Viewport Options
 
 ```bash
 # Mobile viewport (375x667)
-url2md-local convert https://example.com --viewport mobile
+./url2md.sh convert https://example.com --viewport mobile
 
 # Tablet viewport (768x1024)
-url2md-local convert https://example.com --viewport tablet
+./url2md.sh convert https://example.com --viewport tablet
 
 # Desktop viewport (1920x1080)
-url2md-local convert https://example.com --viewport desktop
+./url2md.sh convert https://example.com --viewport desktop
 ```
 
 ### Wait Time
 
 ```bash
 # Wait 5 seconds for JavaScript content
-url2md-local convert https://example.com --wait 5
+./url2md.sh convert https://example.com --wait 5
 
 # Visible browser (not headless)
-url2md-local convert https://example.com --headless false
+./url2md.sh convert https://example.com --headless false
 ```
 
 ### Batch Processing
@@ -92,7 +92,7 @@ echo "https://example.com" > urls.txt
 echo "https://github.com" >> urls.txt
 
 # Convert all URLs
-url2md-local batch urls.txt -o output/
+./url2md.sh batch urls.txt -o output/
 
 # Output files:
 # output/https___example.com.md
@@ -102,7 +102,7 @@ url2md-local batch urls.txt -o output/
 ### Interactive Mode
 
 ```bash
-url2md-local interactive
+./url2md.sh interactive
 
 # Then enter URLs one at a time
 ```
@@ -110,7 +110,7 @@ url2md-local interactive
 ### Health Check
 
 ```bash
-url2md-local health
+./url2md.sh health
 ```
 
 ## Options Summary

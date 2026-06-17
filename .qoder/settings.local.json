@@ -8,7 +8,11 @@
       "Bash(cd /Volumes/wwk_nvme/Users/wwkoon/.openclaw/workspace/url2md-local && git commit -m \"$\\(cat <<'EOF'\nInitial commit: url2md-local CLI tool\n\nURL to Markdown converter using Puppeteer + Turndown.\nIncludes CLI \\(convert/batch/interactive\\), shell wrapper, and user guide.\nEOF\n\\)\")",
       "Bash(cd /Volumes/wwk_nvme/Users/wwkoon/.openclaw/workspace/url2md-local && gh auth status --no-pager 2>&1)",
       "Bash(gh auth status 2>&1)",
-      "Bash(cd /Volumes/wwk_nvme/Users/wwkoon/.openclaw/workspace/url2md-local && gh repo create url2md-local --public --source=. --push --description \"CLI tool to convert URLs to Markdown using Puppeteer + Turndown \\(100% local, no external APIs\\)\" 2>&1)"
+      "Bash(cd /Volumes/wwk_nvme/Users/wwkoon/.openclaw/workspace/url2md-local && gh repo create url2md-local --public --source=. --push --description \"CLI tool to convert URLs to Markdown using Puppeteer + Turndown \\(100% local, no external APIs\\)\" 2>&1)",
+      "Bash(node bin/url2md.js --help 2>&1 | head -20)",
+      "Bash(cd /Volumes/wwk_nvme/Users/wwkoon/.openclaw/workspace/url2md-local && node -e \"const p = require\\('puppeteer'\\); console.log\\('executablePath:', p.executablePath\\(\\)\\)\" 2>&1)",
+      "Bash(cd /Volumes/wwk_nvme/Users/wwkoon/.openclaw/workspace/url2md-local && node -e \"console.log\\(require\\('puppeteer/package.json'\\).version\\)\" 2>&1)",
+      "Bash(ls /Applications/ | grep -i chrom 2>&1; echo \"---\"; ls \"/Volumes/wwk_nvme/Users/wwkoon/.cache/puppeteer\" 2>&1 || true)"
     ]
   }
 }
